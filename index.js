@@ -1,7 +1,7 @@
 // Librerias
 const express = require('express');
 const global = require('./global/environment');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // Base de datos
 const dbConfig = require('./config/db');
@@ -23,11 +23,14 @@ dbConfig.sync().then(() => {
 // Crear app express
 const app = express();
 
-// Habilitar body-parser para leer info de los formularios
-app.use(bodyParser.urlencoded({extended: true}));
+// CORS
+app.use(cors());
+
+// Lectura y parseo del body
+app.use( express.json() );
 
 // Asignar ruta cliente
-app.use('/client', routerClient());
+app.use('/api/client', routerClient());
 
 // Iniciar servidor
 app.listen(global.PORT, () => {
