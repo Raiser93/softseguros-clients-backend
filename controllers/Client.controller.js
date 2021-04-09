@@ -1,5 +1,7 @@
 const ClientModel = require('../models/Client.model');
+const moment = require('moment');
 const { Op } = require('sequelize');
+const { isDate } = require('../helpers/isDate');
 
 // Obtener todos los usuarios con estado en True
 exports.getAllClientsEnable = async (req, res) => {
@@ -46,8 +48,7 @@ exports.createClient = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
-            msg: 'Ocurrio un error al tratar de generar un nuevo cliente',
-            error: error
+            msg: error.errors ? error.errors[0].message : 'Ocurrió un error al tratar de crear un usuario',
         });
     }
 }
@@ -77,8 +78,7 @@ exports.updateClient = async(req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
-            msg: 'Ocurrio un error al tratar de modificar un cliente',
-            error: error
+            msg: error.errors ? error.errors[0].message : 'Ocurrió un error al tratar de editar un usuario',
         });
     }
 }
@@ -100,15 +100,13 @@ exports.disableClient = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
-            msg: 'Ocurrio un error al tratar de cambiar de estado un cliente',
-            error: error
+            msg: error.errors ? error.errors[0].message : 'Ocurrió un error al tratar de eliminar un usuario',
         });
     }
 }
 
 exports.searchClient = async (req, res) => {
     const {char} = req.query;
-    console.log(req.query);
     try {
         const clients = await ClientModel.findAll({
             where: {
@@ -119,9 +117,10 @@ exports.searchClient = async (req, res) => {
                         }
                     },
                     {
-                        date_birth: new Date(char)
+                        date_birth: isDate(char) ? moment(char).toDate() : null
                     },
-                ]
+                ],
+                status: true
             }
         });
 
@@ -130,10 +129,10 @@ exports.searchClient = async (req, res) => {
             clients
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Ocurrio un error al tratar de obtener los clientes',
-            error: error
+            msg: error.errors ? error.errors[0].message : 'Ocurrió un error al tratar de buscar los usuarios',
         });
     }
 }
