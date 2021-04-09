@@ -8,8 +8,9 @@ const dbConfig = new Sequelize(
     {
         host: 'localhost', // Host o direccion de alojamineto de la base de datos
         port: 3306, // Puerto
-        dialect: 'mysql' // Motor de base de datos a usar
-    }
+        dialect: 'mysql', // Motor de base de datos a usar
+        logging: false
+    },
 );
 
 // Se exporta la instancia
